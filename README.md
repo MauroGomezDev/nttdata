@@ -44,10 +44,15 @@ La aplicación se ejecutará en http://localhost:8080.
 
 ## Endpoints
 post http://localhost:8080/api/evaluacion/create-usr   : Creacion de usuario
+
 get http://localhost:8080/api/evaluacion/list          : Lista usuarios registrados
+
 get http://localhost:8080/api/evaluacion/get-usr-by-email {"email": "mgomez@gmail.com"} : Lee un usuario por mail pasado como parametro formato json
+
 put http://localhost:8080/api/evaluacion/update-usr/mgomez@gmail.com : Modifica un registro de usuario
+
 delete http://localhost:8080/api/evaluacion/delete-usr/mgomez@gmail.com : elimina un usuario por su correo
+
 patch http://localhost:8080/api/evaluacion/update-usr/mgomez@gmail.com : Modifica un registro del usuario (fecha ultimo login)
 
 Para la creacion de usuarios, la aplicacion solo permite formato JSON. 
