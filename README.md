@@ -3,7 +3,7 @@ Repositorio evaluacion NTTDATA
 
 # Proyecto de Microservicio de Creación de Usuarios
 
-Este proyecto de microservicio fue desarrollado para aplicar a una vacante de desarrollador para la empresa Global Logic.
+Este proyecto de microservicio fue desarrollado para aplicar a una vacante de desarrollador para la empresa NTTDATA.
 
 El proyecto base fue creado en el sitio https://start.spring.io/
 
