@@ -92,6 +92,9 @@ Si deseas contribuir a este proyecto, por favor abre un problema o envía una so
 ## Licencia
 N/A
 
+## Prueba de la aplicacion
+Se agrego en este mismo repositorio la coleccion de endpoints para ser importdado en postman
+
 ## "Pruebas unitarias" 
 Se desarrollaron 2 tes unitarios y se utilizo junit y mockito
 - EvaluacionControlletTests.java
