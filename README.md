@@ -29,7 +29,7 @@ El servicio persiste los datos en una base de datos H2 y utiliza tokens JWT para
 
 ## Ejecución
 
-Puedes ejecutar el proyecto utilizando Gradle. Abre una terminal en el directorio raíz del proyecto y ejecuta el siguiente comando:
+Para ejecutar el proyecto. Abre una terminal en el directorio raíz del proyecto y ejecuta el siguiente comando:
 
 Terminal cmd: 
 java -jar evaluacion-0.0.1-SNAPSHOT.jar
