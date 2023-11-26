@@ -85,6 +85,7 @@ POST http://localhost:8080/sign-up
 
 ## Diagramas
 Se creo un diagrama de secuencia que encuentra en este mismo repositorio.
+Diagrama Secuencia API evaluacion.dr
 
 ## Contribución
 Si deseas contribuir a este proyecto, por favor abre un problema o envía una solicitud de extracción.
