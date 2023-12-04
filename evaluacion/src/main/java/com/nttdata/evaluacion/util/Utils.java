@@ -9,18 +9,6 @@ import java.util.regex.Pattern;
 public class Utils {
 
     /**
-     * Valida formato de email
-     * @param  email
-     * @return boolean
-     */
-    public static boolean isValidEmail(String email) {
-        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
-        Pattern pattern = Pattern.compile(EMAIL_REGEX);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    /**
      * Valida formato de la password
      * @param  password
      * @return boolean

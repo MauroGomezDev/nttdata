@@ -9,6 +9,7 @@ import com.nttdata.evaluacion.exceptions.UserNotFoundException;
 import com.nttdata.evaluacion.jwt.UserRequest;
 import com.nttdata.evaluacion.model.User;
 import com.nttdata.evaluacion.repository.UserRepository;
+import com.nttdata.evaluacion.util.EmailValidatorService;
 import com.nttdata.evaluacion.util.Utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailValidatorService emailValidatorService;
+
     /**
      * Realiza algunas validaciones antes de llamar al metodo de grabacion
      * @param userRequest incompleto recibido como parametro de la llamada http
@@ -42,7 +46,7 @@ public class UserServiceImpl implements UserService{
             throw new UserAlreadyExistsException("Email ya existe");
         }
 
-        if (!Utils.isValidEmail(userRequest.getEmail())) {
+        if (!emailValidatorService.isValidEmail(userRequest.getEmail())) {
             throw new InvalidDataException("Formato de correo electrónico incorrecto");
         }
 
