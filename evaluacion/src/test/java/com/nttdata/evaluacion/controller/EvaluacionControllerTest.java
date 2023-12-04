@@ -1,6 +1,7 @@
 package com.nttdata.evaluacion.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nttdata.evaluacion.jwt.UserRequest;
 import com.nttdata.evaluacion.model.Phone;
 import com.nttdata.evaluacion.model.User;
 import com.nttdata.evaluacion.repository.UserRepository;
@@ -56,6 +57,7 @@ class EvaluacionControllerTest {
     Phone phone;
     List<Phone> phones;
     User user, userRepeated, userWrongMail, userWrongPass, userWrongJson;
+    UserRequest userRequest;
     String emailBusqueda, emailBusquedaJson;
 
     @BeforeEach
@@ -65,6 +67,7 @@ class EvaluacionControllerTest {
         MockitoAnnotations.openMocks(this);
         phone = new Phone(id, 123456789, 8320000, "SCL");
         user = new User("1","Juan Perez", "juan.perez@gmail.com", "Password12", Arrays.asList(phone), now, now, now, "token", true);
+        userRequest = new UserRequest("Juan Perez", "juan.perez@gmail.com", "Password12", Arrays.asList(phone));
         userRepeated = new User("1","Juan Perez", "juan.perez@gmail.com", "Password12", Arrays.asList(phone), now, now, now,"token", true);
         userWrongMail = new User("1","Juan Perez", "juan.perezgmail.com", "Password12", Arrays.asList(phone), now, now, now,"token", true);
         userWrongPass = new User("1","Juan Perez", "juan.perez@gmail.com", "Passwordx", Arrays.asList(phone), now, now, now,"token", true);
@@ -75,7 +78,7 @@ class EvaluacionControllerTest {
 
     @Test
     void signUp() throws Exception {
-        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/create-usr")
+        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/user")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(Utils.mapToJson(user)))
@@ -92,7 +95,7 @@ class EvaluacionControllerTest {
         when(userRepository.findByEmail("juan.perez@gmail.com"))
                 .thenReturn(existingUser);
 
-        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/create-usr")
+        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/user")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(Utils.mapToJson(userRepeated)))
@@ -102,7 +105,7 @@ class EvaluacionControllerTest {
 
     @Test
     void signUpUserWrongMail() throws Exception {
-        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/create-usr")
+        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/user")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(Utils.mapToJson(userWrongMail)))
@@ -112,7 +115,7 @@ class EvaluacionControllerTest {
 
     @Test
     void signUpUserWrongPass() throws Exception {
-        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/create-usr")
+        MvcResult mockMvcResult = mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL+"/user")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(Utils.mapToJson(userWrongPass)))
@@ -132,7 +135,7 @@ class EvaluacionControllerTest {
     void getUsrByEmail() throws Exception {
         when(userRepository.findByEmail(emailBusqueda))
                 .thenReturn(user);
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL+"/get-usr-by-email")
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL+"/user-by-email")
                 .content(emailBusquedaJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -149,10 +152,10 @@ class EvaluacionControllerTest {
         User userUpdate = new User(user);
         userUpdate.setName("Juan Emeterio");
 
-        when(userService.getUserByEmail(emailBusqueda)).thenReturn(user);
-        when(userService.updateUser(emailBusqueda, userUpdate)).thenReturn(userUpdate);
+        when(userService.getUserByEmail(userRequest)).thenReturn(user);
+        when(userService.updateUser(userRequest)).thenReturn(userUpdate);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/update-usr/{email}", emailBusqueda)
+        mockMvc.perform(MockMvcRequestBuilders.put("/update-usr", emailBusqueda)
                 .content(Utils.mapToJson(userUpdate))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -168,13 +171,13 @@ class EvaluacionControllerTest {
         // Configuramos el comportamiento del servicio para el método deleteUserByEmail
         //doNothing().when(userService).deleteUserByEmail(emailBusqueda);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/delete-usr/{email}", emailBusqueda)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/delete-usr", emailBusqueda)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.mensaje").value("Usuario eliminado correctamente"));
 
-        verify(userService).deleteUserByEmail(emailBusqueda);
+        verify(userService).deleteUserByEmail(userRequest);
     }
 }

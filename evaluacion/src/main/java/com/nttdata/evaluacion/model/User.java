@@ -20,6 +20,8 @@ public class User implements Comparable<User>{
     private String id;
 
     private String name;
+
+    @Column(unique = true)
     private String email;
     private String password;
 

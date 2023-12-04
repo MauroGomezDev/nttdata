@@ -2,6 +2,7 @@ package com.nttdata.evaluacion.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nttdata.evaluacion.exceptions.ResponseException;
+import com.nttdata.evaluacion.jwt.UserRequest;
 import com.nttdata.evaluacion.jwt.UserResponse;
 import com.nttdata.evaluacion.model.User;
 import com.nttdata.evaluacion.service.UserService;
@@ -19,8 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/evaluacion")
-//@CrossOrigin("*")
-//@CrossOrigin(origins = "http://localhost:8080")
 public class EvaluacionController {
 
     private static final Logger log = LoggerFactory.getLogger(EvaluacionController.class);
@@ -32,10 +31,10 @@ public class EvaluacionController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/get-usr-by-email", consumes="application/json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUsrByEmail(@RequestBody String email) {
+    @GetMapping(value = "/user-by-email", consumes="application/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUsrByEmail(@RequestBody UserRequest userRequest) {
 
-        User user = userService.getUserByEmail(email);
+        User user = userService.getUserByEmail(userRequest);
         UserResponse userResponse = new UserResponse(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -43,11 +42,11 @@ public class EvaluacionController {
                 .body(userResponse);
     }
 
-    @PostMapping(value = "/create-usr", consumes="application/json", produces = { "*/*" })
-    public ResponseEntity<?> createUsr(@RequestBody User user) throws JsonProcessingException {
-        log.info("Procesando "+user);
-        User newUser = userService.createUser(user);
-        log.info("Usuario Creado OK "+newUser);
+    @PostMapping(value = "/user", consumes="application/json", produces = { "*/*" })
+    public ResponseEntity<?> createUsr(@RequestBody UserRequest userRequest) throws JsonProcessingException {
+
+        User newUser = userService.createUser(userRequest);
+
         UserResponse userResponse = new UserResponse(newUser);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -55,10 +54,10 @@ public class EvaluacionController {
                 .body(Utils.mapToJson(userResponse));
     }
 
-    @PutMapping(value = "/update-usr/{email}", consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUsr(@PathVariable String email, @RequestBody User updatedUser) {
+    @PutMapping(value = "/update-usr", consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUsr(@RequestBody UserRequest updatedUser) {
 
-        UserResponse userResponse = new UserResponse(userService.updateUser(email, updatedUser));
+        UserResponse userResponse = new UserResponse(userService.updateUser(updatedUser));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -66,20 +65,20 @@ public class EvaluacionController {
                 .body(userResponse);
     }
 
-    @PatchMapping(value = "/update-last-login", consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateLastLogin(@RequestBody String email) {
+    @PatchMapping(value = "/last-login", consumes = "application/json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateLastLogin(@RequestBody UserRequest updatedUser) {
 
-        UserResponse userResponse = new UserResponse(userService.patchUpdateUser(email));
+        UserResponse userResponse = new UserResponse(userService.patchUpdateUser(updatedUser));
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userResponse);
     }
 
-    @DeleteMapping(value = "/delete-usr/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteUsr(@PathVariable String email) {
+    @DeleteMapping(value = "/delete-usr", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteUsr(@RequestBody UserRequest userRequest) {
 
-        userService.deleteUserByEmail(email);
+        userService.deleteUserByEmail(userRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nttdata.evaluacion.exceptions.InvalidDataException;
 import com.nttdata.evaluacion.exceptions.UserAlreadyExistsException;
 import com.nttdata.evaluacion.exceptions.UserNotFoundException;
+import com.nttdata.evaluacion.jwt.UserRequest;
 import com.nttdata.evaluacion.model.User;
 import com.nttdata.evaluacion.repository.UserRepository;
 import com.nttdata.evaluacion.util.Utils;
@@ -31,50 +32,42 @@ public class UserServiceImpl implements UserService{
 
     /**
      * Realiza algunas validaciones antes de llamar al metodo de grabacion
-     * @param user incompleto recibido como parametro de la llamada http
+     * @param userRequest incompleto recibido como parametro de la llamada http
      * @return User
      */
-    public User createUser(User user) {
-        User existingUser = userRepository.findByEmail(user.getEmail());
+    public User createUser(UserRequest userRequest) {
+        User existingUser = userRepository.findByEmail(userRequest.getEmail());
 
         if (existingUser != null) {
-            throw new UserAlreadyExistsException("Usuario ya existe");
+            throw new UserAlreadyExistsException("Email ya existe");
         }
 
-        if (!Utils.isValidEmail(user.getEmail())) {
+        if (!Utils.isValidEmail(userRequest.getEmail())) {
             throw new InvalidDataException("Formato de correo electrónico incorrecto");
         }
 
-        if (!Utils.isValidPassword(user.getPassword())) {
+        if (!Utils.isValidPassword(userRequest.getPassword())) {
             throw new InvalidDataException("Formato de contraseña incorrecto");
         }
 
-        return this.saveUser(user);
+        return this.saveUser(userRequest);
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(email);
-        } catch (JsonProcessingException e) {
-            throw new InvalidDataException("Formato de json incorrecto");
-        }
+    public User getUserByEmail(UserRequest userRequest) {
 
-        String emailToFind = jsonNode.get("email").asText();
-        User user = userRepository.findByEmail(emailToFind);
+        User user = userRepository.findByEmail(userRequest.getEmail());
 
         if (user!=null) {
             return user;
         } else {
-            throw new UserNotFoundException("Usuario no existe");
+            throw new UserNotFoundException("Email no existe");
         }
     }
 
     @Override
-    public User updateUser(String email, User updatedUser) {
-        User user = userRepository.findByEmail(email);
+    public User updateUser(UserRequest updatedUser) {
+        User user = userRepository.findByEmail(updatedUser.getEmail());
 
         if (user != null) {
             user.setName(updatedUser.getName());
@@ -89,17 +82,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User patchUpdateUser(String email) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(email);
-        } catch (JsonProcessingException e) {
-            throw new InvalidDataException("Formato de json incorrecto");
-        }
+    public User patchUpdateUser(UserRequest userRequest) {
 
-        String emailToFind = jsonNode.get("email").asText();
-        User user = userRepository.findByEmail(emailToFind);
+        User user = userRepository.findByEmail(userRequest.getEmail());
+
         if (user != null) {
             user.setLastLogin(LocalDate.now());
             return userRepository.save(user);
@@ -109,8 +95,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public boolean deleteUserByEmail(String email) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email));
+    public boolean deleteUserByEmail(UserRequest userRequest) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(userRequest.getEmail()));
 
         if (user.isPresent()) {
             userRepository.delete(user.get());
@@ -125,7 +111,7 @@ public class UserServiceImpl implements UserService{
      * @param userRequest recibido como parametro de la llamada http
      * @return User
      */
-    public User saveUser(User userRequest) {
+    public User saveUser(UserRequest userRequest) {
         // Generacion de UUID para el id del nuevo usuario
         UUID userId = UUID.randomUUID();
 

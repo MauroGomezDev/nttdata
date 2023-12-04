@@ -6,23 +6,26 @@ import com.nttdata.evaluacion.model.User;
 import java.util.List;
 
 public class UserRequest {
-    private User user;
+   // private User user;
     private String name;
     private String email;
     private String password;
     private List<Phone> phones;
-    private String token;
+  //  private String token;
 
     public UserRequest() {
     }
 
-    public User getUser() {
-        return user;
+    public UserRequest(String juan_perez, String s, String password12, List<Phone> asList) {
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    // public User getUser() {
+   //     return user;
+   // }
+
+    //public void setUser(User user) {
+    //    this.user = user;
+    //}
 
     public String getName() {
         return name;
@@ -56,12 +59,12 @@ public class UserRequest {
         this.phones = phones;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
+//    public String getToken() {
+//        return token;
+//    }
+//
+//    public void setToken(String token) {
+//        this.token = token;
+//    }
 }
 
